@@ -47,6 +47,6 @@ public class Optional_01_Test {
         // TODO si la personne n'existe pas, jeter une exception NotPresentException
         // TODO utiliser la méthode "orElseThrow"
         optPerson.orElseThrow(NotPresentException::new);
-
+        optPerson.orElseThrow(() -> new NotPresentException());
     }
 }
