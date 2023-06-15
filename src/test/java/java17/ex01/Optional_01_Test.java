@@ -46,7 +46,11 @@ public class Optional_01_Test {
         
         // TODO si la personne n'existe pas, jeter une exception NotPresentException
         // TODO utiliser la méthode "orElseThrow"
-        optPerson.orElseThrow(NotPresentException::new);
-        optPerson.orElseThrow(() -> new NotPresentException());
+        //optPerson.orElseThrow(NotPresentException::new);
+        //optPerson.orElseThrow(() -> new NotPresentException());
+        optPerson.ifPresentOrElse(
+                (p) -> System.out.println(p),
+                () -> System.out.println("Rien")
+        );
     }
 }
