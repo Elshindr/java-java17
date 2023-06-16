@@ -3,15 +3,21 @@ package java8.ex08;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
 
+import static java.util.stream.Nodes.collect;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -64,16 +70,41 @@ public class Stream_08_Test {
     }
 
 
+    public static URI getResource(){
+        try {
+            return ClassLoader.getSystemResource(NAISSANCES_DEPUIS_1900_CSV).toURI();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Fichier "+NAISSANCES_DEPUIS_1900_CSV+" non trouvé.");
+        }
+    }
+
     @Test
     public void test_group() throws IOException {
 
         // TODO utiliser la méthode java.nio.file.Files.lines pour créer un stream de lignes du fichier naissances_depuis_1900.csv
         // Le bloc try(...) permet de fermer (close()) le stream après utilisation
-        try (Stream<String> lines = null) {
+        try (Stream<String> lines = java.nio.file.Files.lines(Paths.get("src/main/resources/naissances_depuis_1900.csv"))) {
 
+            lines.forEach(System.out::println);
             // TODO construire une MAP (clé = année de naissance, valeur = somme des nombres de naissance de l'année)
-            Map<String, Integer> result = null;
+          Map<String, List<String>> inter = lines.skip(1).collect(Collectors.groupingBy(l -> l.split(";")[1], Collectors.toList()));
 
+          /*  Arrays.stream(lines.toArray()).map(l ->
+
+                   new Naissance(l[1], l);
+            })*/
+
+                    ///.collect(Collectors.groupingBy(Naissance::getAnnee, Stream.iterate(0, n -> n.getAnnee).sum()));
+
+        /*    Map<String, Integer>result = inter.entrySet().stream().collect(Collectors.toMap(
+                    stringListEntry -> stringListEntry.getKey(),
+                    entry -> entry.getValue().stream().map(line) -> line.split(";")[3]
+                    .map(Integer::parseInt)
+                    .redurce(0, Integer::sum);
+            ))*/
+
+            Map<String, Integer>result = lines.map((s) -> s.split(regex:";"))
+            .collect(Collectors.groupingBy((o) -> o[1], Collectors.summingInt((o)->Integer.valueOf(o[3]))));
 
             assertThat(result.get("2015"), is(8097));
             assertThat(result.get("1900"), is(5130));

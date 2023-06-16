@@ -13,6 +13,7 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Exercice 08 - Stream Parallel - Collections
@@ -36,12 +37,12 @@ public class Stream_07_Test {
 
     // TODO créer une fonction List<Pizza> -> List<Pizza>
     // TODO seules les pizzas ayant un prix >= 1000 sont conservées
-    Function<List<Pizza>, List<Pizza>> filterPizza = null;
+    Function<List<Pizza>, List<Pizza>> filterPizza = p -> p.stream().filter(pz -> pz.getPrice() >= 1000).toList();
 
     // TODO créer une fonction List<Pizza> -> List<Pizza>
     // TODO seules les pizzas ayant un prix >= 1000 sont conservées
     // TODO .parallel()
-    Function<List<Pizza>, List<Pizza>> parallelFilterPizza = null;
+    Function<List<Pizza>, List<Pizza>> parallelFilterPizza = p -> p.stream().filter(pz ->pz.getPrice() >= 1000).parallel().toList();
 
     // TODO exécuter le test pour visualiser le temps d'exécution
     @Test
@@ -72,7 +73,7 @@ public class Stream_07_Test {
         List<Pizza> pizzaArrayList = new ArrayList<>(new Data().getPizzas(nbPizzas));
         List<Pizza> pizzaLinkedList = new LinkedList<>(new Data().getPizzas(nbPizzas));
 
-        long arrayList = monitor(() -> fn.apply(pizzaArrayList));
+        long arrayList  = monitor(() -> fn.apply(pizzaArrayList));
         long linkedList = monitor(() -> fn.apply(pizzaLinkedList));
 
         Logger.getGlobal().info("arrayList=" + arrayList + " ms");
